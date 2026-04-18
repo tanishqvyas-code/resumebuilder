@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ resume.personal.full_name or "Resume" }}</title>
+  <style>
+    @page { size: A4; margin: 1.5cm; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11pt;
+      line-height: 1.35;
+      color: #111;
+      text-align: left;
+    }
+    body { padding: 0; }
+    main { max-width: 900px; margin: 0 auto; }
+    h1 {
+      font-size: 18pt;
+      font-weight: bold;
+      margin: 0 0 6pt 0;
+      text-align: left;
+    }
+    .contact {
+      font-size: 10pt;
+      margin: 0 0 12pt 0;
+      word-break: break-word;
+    }
+    h2 {
+      font-size: 11pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 14pt 0 6pt 0;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 2pt;
+      text-align: left;
+    }
+    p { margin: 0 0 6pt 0; }
+    ul {
+      margin: 4pt 0 10pt 1.1em;
+      padding: 0;
+      list-style-type: disc;
+    }
+    li { margin: 0 0 4pt 0; }
+    .job-head { font-weight: bold; margin-top: 8pt; }
+    .job-meta { font-size: 10pt; margin: 0 0 4pt 0; }
+    .muted { color: #333; }
+    a { color: #111; text-decoration: none; }
+    .skills-line { margin: 0 0 6pt 0; }
+    .project-title { font-weight: bold; margin-top: 8pt; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>{{ resume.personal.full_name or " " }}</h1>
+      <p class="contact">
+        {% set contact_parts = [
+          resume.personal.email | default("", true),
+          resume.personal.phone | default("", true),
+          resume.personal.location | default("", true),
+          resume.personal.linkedin_url | default("", true),
+          resume.personal.portfolio_url | default("", true),
+        ] %}
+        {{ contact_parts | reject("equalto", "") | join(" | ") }}
+      </p>
+    </header>
+
+    {% if resume.professional_summary and resume.professional_summary.strip() %}
+    <section aria-labelledby="h-summary">
+      <h2 id="h-summary">Professional Summary</h2>
+      {% for para in resume.professional_summary.strip().split("\n\n") %}
+        {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if resume.skills %}
+    <section aria-labelledby="h-skills">
+      <h2 id="h-skills">Skills</h2>
+      {% for cat in resume.skills %}
+        {% if cat.items and cat.items | length > 0 %}
+          <p class="skills-line"><span class="muted">{{ cat.category_name }}:</span> {{ cat.items | join(", ") }}</p>
+        {% endif %}
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if resume.work_experience %}
+    <section aria-labelledby="h-work">
+      <h2 id="h-work">Work Experience</h2>
+      {% for job in resume.work_experience %}
+        <p class="job-head">{{ job.job_title }}{% if job.company_name %} — {{ job.company_name }}{% endif %}</p>
+        <p class="job-meta">
+          {% if job.location %}{{ job.location }}{% endif %}
+          {% if job.start_date or job.end_date %}
+            {% if job.location %} | {% endif %}
+            {{ job.start_date }}{% if job.start_date or job.end_date %} – {% endif %}{{ job.end_date }}
+          {% endif %}
+        </p>
+        {% if job.bullets %}
+          <ul>
+            {% for b in job.bullets %}
+              {% if b and b.strip() %}<li>{{ b.strip() }}</li>{% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if resume.education %}
+    <section aria-labelledby="h-edu">
+      <h2 id="h-edu">Education</h2>
+      {% for ed in resume.education %}
+        <p>
+          {{ ed.degree }}{% if ed.institution %} — {{ ed.institution }}{% endif %}
+          {% if ed.location %} — {{ ed.location }}{% endif %}
+          {% if ed.graduation_year %} — {{ ed.graduation_year }}{% endif %}
+          {% if ed.gpa %} — GPA: {{ ed.gpa }}{% endif %}
+        </p>
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if resume.projects %}
+    <section aria-labelledby="h-proj">
+      <h2 id="h-proj">Projects</h2>
+      {% for pr in resume.projects %}
+        <p class="project-title">{{ pr.title }}</p>
+        {% if pr.technologies_used %}<p class="job-meta">Technologies: {{ pr.technologies_used }}</p>{% endif %}
+        {% if pr.description %}<p>{{ pr.description }}</p>{% endif %}
+        {% if pr.link %}<p>{{ pr.link }}</p>{% endif %}
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if resume.certifications %}
+    <section aria-labelledby="h-cert">
+      <h2 id="h-cert">Certifications</h2>
+      {% for c in resume.certifications %}
+        <p>{{ c.name }}{% if c.issuer %} — {{ c.issuer }}{% endif %}{% if c.date %} — {{ c.date }}{% endif %}</p>
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if resume.achievements %}
+    <section aria-labelledby="h-ach">
+      <h2 id="h-ach">Achievements</h2>
+      <ul>
+        {% for a in resume.achievements %}
+          {% if a and a.strip() %}<li>{{ a.strip() }}</li>{% endif %}
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    {% if resume.languages %}
+    <section aria-labelledby="h-lang">
+      <h2 id="h-lang">Languages</h2>
+      {% for lang in resume.languages %}
+        <p>{{ lang.language }}{% if lang.proficiency %} — {{ lang.proficiency }}{% endif %}</p>
+      {% endfor %}
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>

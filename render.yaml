@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: ats-resume-builder
+    env: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_NAME
+        value: ATS Resume Builder
+      - key: DEBUG
+        value: "false"
+      - key: SESSION_COOKIE_NAME
+        value: rb_session
+      - key: SESSION_TTL_SECONDS
+        value: "1209600"
+      - key: AI_RATE_LIMIT_PER_MINUTE
+        value: "30"
+      - key: AI_RATE_WINDOW_SECONDS
+        value: "60"
+      - key: CORS_ORIGINS
+        value: https://your-render-domain.onrender.com
+      - key: REDIS_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.0-flash

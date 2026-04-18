@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ATS Resume Builder</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#editor-main">Skip to editor</a>
+  <header class="app-header">
+    <div class="wrap header-inner">
+      <div>
+        <h1 class="brand">ATS Resume Builder</h1>
+        <p class="tagline">Structured input, live preview, Gemini-assisted polish.</p>
+      </div>
+      <div class="header-actions">
+        <span class="status-pill" id="save-status" role="status" aria-live="polite">Ready</span>
+        <a class="btn secondary" href="/ats-checker">ATS PDF Checker</a>
+        <button type="button" class="btn secondary" id="btn-html">Preview HTML</button>
+        <button type="button" class="btn" id="btn-pdf">Download PDF</button>
+        <button type="button" class="btn secondary" id="btn-docx">Download DOCX</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="subnav wrap" aria-label="Section navigation">
+    <a href="#personal">Personal</a>
+    <a href="#summary">Summary</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#education">Education</a>
+    <a href="#projects">Projects</a>
+    <a href="#certs">Certs</a>
+    <a href="#achievements">Achievements</a>
+    <a href="#languages">Languages</a>
+  </nav>
+
+  <main class="layout wrap" id="editor-main">
+    <section class="panel editor" aria-label="Resume editor">
+      <form id="resume-form" novalidate>
+        <section id="personal" class="card">
+          <h2>Personal Information</h2>
+          <div class="grid2">
+            <label>Full Name<input name="full_name" type="text" autocomplete="name" /></label>
+            <label>Location (City, Country)<input name="location" type="text" autocomplete="address-level2" /></label>
+            <label>Email<input name="email" type="email" autocomplete="email" /></label>
+            <label>Phone<input name="phone" type="tel" autocomplete="tel" /></label>
+            <label>LinkedIn URL<input name="linkedin_url" type="url" inputmode="url" placeholder="https://" /></label>
+            <label>Portfolio / GitHub URL<input name="portfolio_url" type="url" inputmode="url" placeholder="https://" /></label>
+          </div>
+        </section>
+
+        <section id="summary" class="card">
+          <div class="card-head">
+            <h2>Professional Summary</h2>
+            <div class="ai-row">
+              <label class="inline">Target role<input id="ai-target-role" type="text" placeholder="e.g. Software Engineer" /></label>
+              <label class="inline">Years experience<input id="ai-years" type="text" placeholder="e.g. 5" /></label>
+              <button type="button" class="btn small" id="btn-ai-summary">Generate with AI</button>
+            </div>
+          </div>
+          <label>Summary<textarea name="professional_summary" rows="5" placeholder="2–4 lines. Use AI to refine."></textarea></label>
+          <p class="hint">AI uses your summary field plus the target role and years fields above.</p>
+        </section>
+
+        <section id="ats-score" class="card">
+          <div class="card-head">
+            <h2>ATS Score Checker</h2>
+            <div class="ai-row">
+              <label class="inline">Target role<input id="ats-target-role" type="text" placeholder="e.g. Business Analyst" /></label>
+              <button type="button" class="btn small" id="btn-ats-score">Check ATS score</button>
+            </div>
+          </div>
+          <label>Job Description (recommended for honest keyword scoring)
+            <textarea id="ats-job-description" rows="5" placeholder="Paste the JD here for role-specific analysis."></textarea>
+          </label>
+          <div id="ats-report" class="ats-report" hidden></div>
+          <p class="hint">The score is conservative and intentionally honest. It does not overestimate fit.</p>
+        </section>
+
+        <section id="skills" class="card">
+          <div class="card-head">
+            <h2>Skills</h2>
+            <div class="ai-row">
+              <label class="inline">Job role<input id="ai-skill-role" type="text" placeholder="e.g. Data Analyst" /></label>
+              <label class="inline">Industry<input id="ai-skill-industry" type="text" placeholder="Optional" /></label>
+              <button type="button" class="btn small" id="btn-ai-skills">Suggest skills</button>
+            </div>
+          </div>
+          <div id="skills-list"></div>
+          <button type="button" class="btn secondary small" id="add-skill-cat">Add skill category</button>
+        </section>
+
+        <section id="experience" class="card">
+          <h2>Work Experience</h2>
+          <div id="work-list"></div>
+          <button type="button" class="btn secondary small" id="add-work">Add position</button>
+        </section>
+
+        <section id="education" class="card">
+          <h2>Education</h2>
+          <div id="education-list"></div>
+          <button type="button" class="btn secondary small" id="add-education">Add education</button>
+        </section>
+
+        <section id="projects" class="card">
+          <h2>Projects</h2>
+          <div id="projects-list"></div>
+          <button type="button" class="btn secondary small" id="add-project">Add project</button>
+        </section>
+
+        <section id="certs" class="card">
+          <h2>Certifications</h2>
+          <div id="certs-list"></div>
+          <button type="button" class="btn secondary small" id="add-cert">Add certification</button>
+        </section>
+
+        <section id="achievements" class="card">
+          <h2>Achievements</h2>
+          <div id="achievements-list"></div>
+          <button type="button" class="btn secondary small" id="add-achievement">Add bullet</button>
+        </section>
+
+        <section id="languages" class="card">
+          <h2>Languages</h2>
+          <div id="languages-list"></div>
+          <button type="button" class="btn secondary small" id="add-language">Add language</button>
+        </section>
+      </form>
+    </section>
+
+    <section class="panel preview" aria-label="Live preview">
+      <div class="preview-head">
+        <h2>Live preview</h2>
+        <p class="hint">Updates after you pause typing. Matches PDF export layout.</p>
+      </div>
+      <div class="preview-frame-wrap">
+        <iframe id="preview-frame" title="Resume preview" sandbox="allow-same-origin"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer wrap">
+    <p>ATS mode: no icons in export, standard headings, left-aligned. Keep content truthful when using AI.</p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="/static/js/app.js" defer></script>
+</body>
+</html>

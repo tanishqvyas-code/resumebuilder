@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ATS PDF Checker</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap header-inner">
+      <div>
+        <h1 class="brand">ATS PDF Checker</h1>
+        <p class="tagline">Upload resume PDF, run honest ATS scoring.</p>
+      </div>
+      <div class="header-actions">
+        <a href="/" class="btn secondary">Back to Builder</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding: 24px 20px 42px;">
+    <section class="card" style="max-width: 960px; margin: 0 auto;">
+      <h2>Upload Resume PDF</h2>
+      <div class="grid2">
+        <label>Target Role
+          <input id="pdf-target-role" type="text" placeholder="e.g. Business Analyst" />
+        </label>
+        <label>Resume PDF
+          <input id="pdf-file" type="file" accept="application/pdf,.pdf" />
+        </label>
+      </div>
+      <label style="margin-top:10px;">Job Description (recommended for accurate keyword scoring)
+        <textarea id="pdf-job-description" rows="7" placeholder="Paste job description here..."></textarea>
+      </label>
+      <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+        <button id="btn-pdf-ats-check" class="btn" type="button">Check ATS Score</button>
+      </div>
+      <p class="hint">Only text-based PDFs are supported. Scanned/image PDFs may produce low scores.</p>
+      <div id="pdf-ats-report" class="ats-report" hidden></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="/static/js/ats-checker.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# FastAPI stack
+fastapi<0.100
+uvicorn
+python-multipart
+pydantic<2
+python-dotenv
+# Redis (async)
+redis
+
+# Google Gemini
+# Gemini via direct HTTP (avoids heavy SDK deps on Windows)
+
+# Templating & export
+Jinja2
+# Optional: enable DOCX export endpoint
+# python-docx
+pypdf
+
+# HTTP client (health checks, optional)
+httpx
