@@ -30,11 +30,12 @@ class Settings(BaseModel):
 @lru_cache
 def get_settings() -> Settings:
     load_dotenv()
+    gemini_key = os.getenv("GEMINI_API_KEY", "").strip() or os.getenv("GOOGLE_API_KEY", "").strip()
     return Settings(
         app_name=os.getenv("APP_NAME", "ATS Resume Builder"),
         debug=os.getenv("DEBUG", "false").lower() == "true",
         redis_url=os.getenv("REDIS_URL", "redis://localhost:6379/0"),
-        gemini_api_key=os.getenv("GEMINI_API_KEY", ""),
+        gemini_api_key=gemini_key,
         gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
         session_cookie_name=os.getenv("SESSION_COOKIE_NAME", "rb_session"),
         session_ttl_seconds=int(os.getenv("SESSION_TTL_SECONDS", str(60 * 60 * 24 * 14))),

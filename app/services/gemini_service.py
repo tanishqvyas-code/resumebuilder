@@ -12,9 +12,28 @@ logger = logging.getLogger(__name__)
 GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
 
 
+def _extract_gemini_error(response: httpx.Response) -> str:
+    try:
+        payload = response.json()
+    except Exception:
+        return (response.text or "").strip() or f"HTTP {response.status_code}"
+
+    if isinstance(payload, dict):
+        err = payload.get("error")
+        if isinstance(err, dict):
+            message = err.get("message")
+            status = err.get("status")
+            code = err.get("code")
+            if message and status:
+                return f"{status} ({code}): {message}" if code else f"{status}: {message}"
+            if message:
+                return str(message)
+    return (response.text or "").strip() or f"HTTP {response.status_code}"
+
+
 async def _generate(settings: Settings, prompt: str) -> str:
     if not settings.gemini_api_key:
-        raise RuntimeError("GEMINI_API_KEY is not configured")
+        raise RuntimeError("Gemini API key missing. Set GEMINI_API_KEY (or GOOGLE_API_KEY).")
 
     url = f"{GEMINI_BASE_URL}/models/{settings.gemini_model}:generateContent"
     params = {"key": settings.gemini_api_key}
@@ -27,10 +46,11 @@ async def _generate(settings: Settings, prompt: str) -> str:
             resp.raise_for_status()
             data = resp.json()
     except httpx.HTTPStatusError as e:
-        logger.warning("Gemini HTTP error: %s", e.response.text)
-        raise RuntimeError("Gemini API request failed") from e
+        detail = _extract_gemini_error(e.response)
+        logger.warning("Gemini HTTP error: %s", detail)
+        raise RuntimeError(f"Gemini API request failed: {detail}") from e
     except httpx.HTTPError as e:
-        raise RuntimeError("Gemini API unavailable") from e
+        raise RuntimeError(f"Gemini API unavailable: {e}") from e
 
     parts: list[str] = []
     for cand in data.get("candidates", []) or []:
