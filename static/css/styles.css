@@ -211,6 +211,7 @@ input[type="text"],
 input[type="email"],
 input[type="url"],
 input[type="tel"],
+input[type="file"],
 textarea {
   width: 100%;
   padding: 10px 11px;
@@ -373,4 +374,98 @@ button:focus-visible {
 }
 .toast[hidden] {
   display: none;
+}
+
+@media (max-width: 760px) {
+  .wrap {
+    padding: 0 14px;
+  }
+
+  .header-inner {
+    padding: 14px 14px;
+  }
+
+  .brand {
+    font-size: 1.1rem;
+  }
+
+  .tagline {
+    font-size: 0.82rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .header-actions .btn,
+  .header-actions .status-pill {
+    width: 100%;
+    text-align: center;
+  }
+
+  .subnav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 12px;
+    padding: 10px 14px;
+  }
+
+  .layout {
+    padding: 14px 14px 24px;
+    gap: 14px;
+  }
+
+  .panel.preview {
+    position: relative;
+    top: 0;
+  }
+
+  .preview-frame-wrap {
+    min-height: 56vh;
+  }
+
+  #preview-frame {
+    height: 58vh;
+  }
+
+  .card {
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .dynamic-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dynamic-head .btn {
+    width: 100%;
+  }
+
+  .ai-row {
+    align-items: stretch;
+  }
+
+  .ai-row .inline,
+  .ai-row .btn {
+    flex: 1 1 100%;
+  }
+
+  .btn,
+  .btn.small {
+    width: 100%;
+  }
+
+  .app-footer {
+    padding: 16px 14px;
+  }
+
+  .toast {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    max-width: none;
+  }
 }
