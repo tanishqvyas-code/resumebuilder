@@ -686,65 +686,65 @@
       }
     });
 
-    document.getElementById("btn-ats-score").addEventListener("click", async () => {
-      const btn = document.getElementById("btn-ats-score");
-      const reportEl = document.getElementById("ats-report");
-      collectFromDom();
-      btn.disabled = true;
-      try {
-        await saveResume();
-        const res = await apiFetch("/api/ai/ats-score", {
-          method: "POST",
-          body: JSON.stringify({
-            target_role: document.getElementById("ats-target-role").value.trim(),
-            job_description: document.getElementById("ats-job-description").value.trim(),
-            resume_data: state,
-          }),
-        });
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.detail || res.statusText);
-        }
-        const data = await res.json();
-        renderAtsReport(data);
-        reportEl.hidden = false;
-        showToast("ATS score generated.");
-      } catch (e) {
-        showToast(e.message || "ATS scoring failed", true);
-      } finally {
-        btn.disabled = false;
-      }
-    });
+    // document.getElementById("btn-ats-score").addEventListener("click", async () => {
+    //   const btn = document.getElementById("btn-ats-score");
+    //   const reportEl = document.getElementById("ats-report");
+    //   collectFromDom();
+    //   btn.disabled = true;
+    //   try {
+    //     await saveResume();
+    //     const res = await apiFetch("/api/ai/ats-score", {
+    //       method: "POST",
+    //       body: JSON.stringify({
+    //         target_role: document.getElementById("ats-target-role").value.trim(),
+    //         job_description: document.getElementById("ats-job-description").value.trim(),
+    //         resume_data: state,
+    //       }),
+    //     });
+    //     if (!res.ok) {
+    //       const err = await res.json().catch(() => ({}));
+    //       throw new Error(err.detail || res.statusText);
+    //     }
+    //     const data = await res.json();
+    //     renderAtsReport(data);
+    //     reportEl.hidden = false;
+    //     showToast("ATS score generated.");
+    //   } catch (e) {
+    //     showToast(e.message || "ATS scoring failed", true);
+    //   } finally {
+    //     btn.disabled = false;
+    //   }
+    // });
 
-    function renderAtsReport(data) {
-      const reportEl = document.getElementById("ats-report");
-      const strengths = (data.strengths || []).map((s) => `<li>${escapeHtml(s)}</li>`).join("");
-      const concerns = (data.concerns || []).map((s) => `<li>${escapeHtml(s)}</li>`).join("");
-      const suggestions = (data.suggestions || []).map((s) => `<li>${escapeHtml(s)}</li>`).join("");
-      const breakdown = (data.breakdown || [])
-        .map(
-          (b) =>
-            `<div class="ats-breakdown-item"><strong>${escapeHtml(b.name)}:</strong> ${b.score}/${b.max} - ${escapeHtml(
-              b.detail || ""
-            )}</div>`
-        )
-        .join("");
+    // function renderAtsReport(data) {
+    //   const reportEl = document.getElementById("ats-report");
+    //   const strengths = (data.strengths || []).map((s) => `<li>${escapeHtml(s)}</li>`).join("");
+    //   const concerns = (data.concerns || []).map((s) => `<li>${escapeHtml(s)}</li>`).join("");
+    //   const suggestions = (data.suggestions || []).map((s) => `<li>${escapeHtml(s)}</li>`).join("");
+    //   const breakdown = (data.breakdown || [])
+    //     .map(
+    //       (b) =>
+    //         `<div class="ats-breakdown-item"><strong>${escapeHtml(b.name)}:</strong> ${b.score}/${b.max} - ${escapeHtml(
+    //           b.detail || ""
+    //         )}</div>`
+    //     )
+    //     .join("");
 
-      reportEl.innerHTML = `
-        <div class="ats-score-line">
-          <div class="ats-score-value">${Number(data.score || 0)}/100</div>
-          <div class="ats-rating">${escapeHtml(data.rating || "Unrated")}</div>
-        </div>
-        <div>${breakdown}</div>
-        <h3 style="margin:10px 0 4px;font-size:0.95rem;">Strengths</h3>
-        <ul class="ats-list">${strengths || "<li>No strengths detected yet.</li>"}</ul>
-        <h3 style="margin:10px 0 4px;font-size:0.95rem;">Concerns</h3>
-        <ul class="ats-list">${concerns || "<li>No major concerns detected.</li>"}</ul>
-        <h3 style="margin:10px 0 4px;font-size:0.95rem;">Actionable fixes</h3>
-        <ul class="ats-list">${suggestions || "<li>Maintain current quality and tailor keywords to each JD.</li>"}</ul>
-        <p class="ats-note">${escapeHtml(data.honesty_note || "")}</p>
-      `;
-    }
+    //   reportEl.innerHTML = `
+    //     <div class="ats-score-line">
+    //       <div class="ats-score-value">${Number(data.score || 0)}/100</div>
+    //       <div class="ats-rating">${escapeHtml(data.rating || "Unrated")}</div>
+    //     </div>
+    //     <div>${breakdown}</div>
+    //     <h3 style="margin:10px 0 4px;font-size:0.95rem;">Strengths</h3>
+    //     <ul class="ats-list">${strengths || "<li>No strengths detected yet.</li>"}</ul>
+    //     <h3 style="margin:10px 0 4px;font-size:0.95rem;">Concerns</h3>
+    //     <ul class="ats-list">${concerns || "<li>No major concerns detected.</li>"}</ul>
+    //     <h3 style="margin:10px 0 4px;font-size:0.95rem;">Actionable fixes</h3>
+    //     <ul class="ats-list">${suggestions || "<li>Maintain current quality and tailor keywords to each JD.</li>"}</ul>
+    //     <p class="ats-note">${escapeHtml(data.honesty_note || "")}</p>
+    //   `;
+    // }
 
     async function boot() {
       setSaveStatus("Starting…");
