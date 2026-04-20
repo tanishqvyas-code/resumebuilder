@@ -102,7 +102,7 @@ def resume_to_pdf_bytes(data: ResumeData) -> bytes:
             if pr.technologies_used.strip():
                 meta(f"Technologies: {pr.technologies_used.strip()}")
             normal(pr.description)
-            meta(pr.link)
+            meta(f"Project Link: {pr.link}")
             blank()
 
     if data.certifications:
